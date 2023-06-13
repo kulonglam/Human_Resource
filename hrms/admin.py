@@ -1,10 +1,22 @@
 from django.contrib import admin
+from .models import Employee,Department,Attendance,Kin, Leave, Recruitment, Payroll
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+from django.contrib.auth import get_user_model
+from .models import CustomUser
+from .models import Profile
 
 # Register your models here.
-from django.contrib import admin
-from .models import Employee,Department,Attendance,Kin, Leave, Recruitment, Payroll
 
 
+User = get_user_model()
+
+class ProfileInline(admin.StackedInline):
+    model = Profile
+
+class CustomUserAdmin(UserAdmin):
+    inlines = [ProfileInline]
 
 
 class EmployeeAdmin(admin.ModelAdmin):
@@ -37,3 +49,5 @@ admin.site.register(Kin, KinAdmin)
 admin.site.register(Recruitment, RecruitmentAdmin)
 admin.site.register(Leave, LeaveAdmin)
 admin.site.register(Payroll, PayrollAdmin)
+admin.site.register(User, CustomUserAdmin)
+admin.site.register(Profile)

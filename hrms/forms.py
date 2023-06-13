@@ -60,6 +60,7 @@ class KinForm(forms.ModelForm):
 
 class DepartmentForm(forms.ModelForm):
     name = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Department Name'}))
+    location = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Location'}))
     history = forms.CharField(max_length=1000, widget=forms.Textarea(attrs={'class':'form-control', 'placeholder':'Brief Department History'}))
     
     class Meta:

@@ -1,6 +1,3 @@
-from django.shortcuts import render
-
-# Create your views here.
 from django.shortcuts import render,redirect, resolve_url,reverse, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib.auth import get_user_model
@@ -14,19 +11,25 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+
+
 
 
 # Create your views here.
+
 class Index(TemplateView):
    template_name = 'hrms/home/home.html'
 
 #   Authentication
+
 class Register (CreateView):
     model = get_user_model()
     form_class  = RegistrationForm
     template_name = 'hrms/registrations/register.html'
     success_url = reverse_lazy('hrms:login')
-    
+
 class Login_View(LoginView):
     model = get_user_model()
     form_class = LoginForm
@@ -37,13 +40,14 @@ class Login_View(LoginView):
         return url
 
 class Logout_View(View):
-
+    
     def get(self,request):
         logout(self.request)
         return redirect ('hrms:login',permanent=True)
     
     
  # Main Board   
+
 class Dashboard(LoginRequiredMixin,ListView):
     template_name = 'hrms/dashboard/index.html'
     login_url = 'hrms:login'
@@ -58,6 +62,7 @@ class Dashboard(LoginRequiredMixin,ListView):
         return context
 
 # Employee's Controller
+
 class Employee_New(LoginRequiredMixin,CreateView):
     model = Employee  
     form_class = EmployeeForm  
@@ -65,14 +70,14 @@ class Employee_New(LoginRequiredMixin,CreateView):
     login_url = 'hrms:login'
     redirect_field_name = 'redirect:'
     
-    
+
 class Employee_All(LoginRequiredMixin,ListView):
     template_name = 'hrms/employee/index.html'
     model = Employee
     login_url = 'hrms:login'
     context_object_name = 'employees'
     paginate_by  = 5
-    
+
 class Employee_View(LoginRequiredMixin,DetailView):
     queryset = Employee.objects.select_related('department')
     template_name = 'hrms/employee/single.html'
@@ -87,16 +92,23 @@ class Employee_View(LoginRequiredMixin,DetailView):
             return context
         except ObjectDoesNotExist:
             return context
-        
+
 class Employee_Update(LoginRequiredMixin,UpdateView):
     model = Employee
     template_name = 'hrms/employee/edit.html'
     form_class = EmployeeForm
     login_url = 'hrms:login'
     
-    
+ 
 class Employee_Delete(LoginRequiredMixin,DeleteView):
-    pass
+    model = Employee
+    template_name = 'hrms/employee/delete.html'
+    success_url = reverse_lazy('hrms:dashboard')
+    
+    def get_queryset(self):
+        return Employee.objects.all()
+    
+
 
 class Employee_Kin_Add (LoginRequiredMixin,CreateView):
     model = Kin
@@ -143,7 +155,7 @@ class Department_Detail(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context["dept"] = Department.objects.get(pk=self.kwargs['pk']) 
         return context
-    
+
 class Department_New (LoginRequiredMixin,CreateView):
     model = Department
     template_name = 'hrms/department/create.html'

@@ -1,0 +1,18 @@
+{% extends 'hrms/layout.html' %}
+{% load static %}
+{% block title %} Employee Delete| AVVENTO MEDIA HRMIS {% endblock title %}
+
+{% block content %}
+
+
+<h1>Delete Employee</h1>
+<p>Are you sure you want to delete {{ employee}}?</p>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="{% url 'hrms:employee_view' employee.id %}" class="btn btn-info">Cancel</a>
+</form>
+{% endblock %}
+
+

@@ -1,15 +1,32 @@
 from django.db import models
-
-# Create your models here.
-from django.db import models
 import random
 from django.urls import reverse
 from django.utils import timezone
 from datetime import time, datetime
-
+from django.contrib.auth.models import AbstractUser, Group
+from django.conf import settings
 
 
 # Create your models here.
+class CustomUser(AbstractUser):
+    
+    pass
+class CustomGroup(Group):
+    # Additional fields or methods for your custom group model
+    pass
+CustomUser._meta.get_field('groups').remote_field.related_name = 'custom_user_set'
+
+# Modify the user_set field in CustomGroup model
+
+class Profile(models.Model):
+    staff = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    address = models.CharField(max_length=200, null=True)
+    phone = models.CharField(max_length=20, null=True)
+    image = models.ImageField(default='avatar.jpg', upload_to='media')
+
+    def __str__(self):
+        return f"{self.staff.username}-Profile"
+
 class Department(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
     location = models.CharField(max_length=70, null=False, default='location')
@@ -42,7 +59,8 @@ class Employee(models.Model):
     language = models.CharField(choices=LANGUAGE, max_length=10, default='english')
     account_no = models.CharField(max_length=10, default='0123456789')
     bank = models.CharField(max_length=25, default='First Bank Plc')
-    salary = models.CharField(max_length=16,default='00,000.00')      
+    salary = models.CharField(max_length=16,default='00,000.00') 
+     
     def __str__(self):
         return self.first_name
         
